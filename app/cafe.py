@@ -5,6 +5,7 @@ from app.errors import (
     NotVaccinatedError,
     OutdatedVaccineError,
     NotWearingMaskError,
+    InvalidVaccineDataError,
 )
 
 
@@ -19,10 +20,20 @@ class Cafe:
         vaccine = visitor.get("vaccine")
         if vaccine is None:
             raise NotVaccinatedError(name)
+        if not isinstance(vaccine, dict):
+            raise InvalidVaccineDataError(name, "vaccine must be a dict")
 
-        expiration = vaccine.get("expiration_date")
+        if "expiration_date" not in vaccine:
+            raise InvalidVaccineDataError(name, "missing 'expiration_date'")
+
+        expiration = vaccine["expiration_date"]
+        if not isinstance(expiration, datetime.date):
+            raise InvalidVaccineDataError(
+                name, "'expiration_date' must be a datetime.date"
+            )
+
         today = datetime.date.today()
-        if expiration is None or expiration < today:
+        if expiration < today:
             raise OutdatedVaccineError(name, expiration)
 
         if not visitor.get("wearing_a_mask", False):

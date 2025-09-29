@@ -11,6 +11,14 @@ class NotVaccinatedError(VaccineError):
         super().__init__(msg)
 
 
+class InvalidVaccineDataError(VaccineError):
+    """Raised when the vaccine data structure or types are invalid."""
+
+    def __init__(self, name: str, detail: str) -> None:
+        msg = f"Visitor {name} has invalid vaccine data: {detail}."
+        super().__init__(msg)
+
+
 class OutdatedVaccineError(VaccineError):
     """Raised when a visitor's vaccine is expired."""
 
